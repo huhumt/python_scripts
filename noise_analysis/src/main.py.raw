@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from analysis_data import analysis_data, find_max_value, get_sqrt_square_average
+from find_pattern import find_pattern
+from plot_figure import plot_figure
+from read_txt import read_txt
+import numpy as np
+import sys
+
+def main():
+
+    """
+    This is main function for the project
+    """
+
+    filename_list = find_pattern("noise_data*.txt", "./data/")
+    for filename in filename_list:
+        noise_list = read_txt(filename).read()
+        max_noise = 0
+        print(noise_list[0])
+        print(noise_list[-1])
+        for frame_data in noise_list:
+            for tx_data in frame_data:
+                for rx_data in tx_data:
+                    if abs(rx_data) > max_noise:
+                        max_noise = abs(rx_data)
+        print("max noise:%d" % (max_noise))
+
+    return 0
+
+if __name__ == "__main__":
+
+    '''
+    System main entry
+    '''
+
+    main()

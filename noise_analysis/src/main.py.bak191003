@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from analysis_data import analysis_data, find_max_value, get_sqrt_square_average
+from find_pattern import find_pattern
+from plot_figure import plot_figure
+from read_txt import read_txt
+import numpy as np
+import sys
+
+def main():
+
+    """
+    This is main function for the project
+    """
+
+    filename_list = find_pattern("lcd_on*.txt", "./data/")
+    for filename in filename_list:
+        x_list, noise_list, touch_list = read_txt(filename).read()
+        max_noise_list = [0] * len(noise_list)
+        max_touch_list = [0] * len(touch_list)
+
+        for i in range(len(noise_list)): # cf 63~40
+            for cf_frame in noise_list[i]: # 3000 frame
+                for tx_data in cf_frame:
+                    for rx_data in tx_data:
+                        if abs(rx_data) > max_noise_list[i]:
+                            max_noise_list[i] = abs(rx_data)
+
+        for i in range(len(touch_list)): # cf 63~40
+            sum_of_diff = 0
+            cnt_of_diff = 0
+            in_diff_mode = 0
+            for cf_frame in touch_list[i]: # 2000 frame
+                max_diff = 0
+                for tx_data in cf_frame:
+                    for rx_data in tx_data:
+                        if rx_data > max_diff:
+                            max_diff = rx_data
+                            if max_diff > max_touch_list[i]:
+                                max_touch_list[i] = max_diff
+                if max_diff > 200 and in_diff_mode == 0:
+                    in_diff_mode = 1
+                elif max_diff < 100 and in_diff_mode == 1:
+                    in_diff_mode = 2
+
+                if in_diff_mode == 1:
+                    sum_of_diff += max_diff
+                    cnt_of_diff += 1
+            # max_touch_list[i] = sum_of_diff / cnt_of_diff;
+
+        for i in range(len(noise_list)):
+            print("K1=%d, max_diff=%d" % (x_list[i], max_noise_list[i]))
+
+        snr_list = []
+        for i in range(len(touch_list)):
+            snr = max_touch_list[i] / max_noise_list[i]
+            snr_list.append(snr)
+            print("K2=%d, max_diff=%d, max_noise=%d, snr=%.3f" % (x_list[i], max_touch_list[i], max_noise_list[i], snr))
+
+        # plot_figure(x_list, snr_list)
+        # plot_figure(x_list, max_noise_list)
+        # plot_figure(x_list, max_touch_list)
+
+    return 0
+
+if __name__ == "__main__":
+
+    '''
+    System main entry
+    '''
+
+    main()

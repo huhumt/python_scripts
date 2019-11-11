@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from re import findall
+
+class read_txt:
+    '''
+    This class is used to read a txt file
+    '''
+    def __init__(self, name):
+        self.name = name
+
+    def read(self):
+
+        fd = open(self.name, 'r')
+        try:
+            tx_counter = 0
+            is_valid_data_flag = 0
+            frame_list = []
+            cur_frame_list = []
+            for line in fd:
+                if is_valid_data_flag == 1:
+                    cur_tx_data = list(map(int, line.split()))[:rx_num]
+                    cur_frame_list.append(cur_tx_data)
+                    tx_counter += 1
+                    if tx_counter >= tx_num:
+                        is_valid_data_flag = 0
+                        frame_list.append(cur_frame_list)
+                if 'Round' in line and 'tx=' in line and 'rx=' in line:
+                    tx_num = int(findall('\d+', line)[1])
+                    rx_num = int(findall('\d+', line)[2])
+                    is_valid_data_flag = 1
+                    tx_counter = 0
+                    cur_frame_list = []
+
+        finally:
+            fd.close()
+
+        return frame_list
