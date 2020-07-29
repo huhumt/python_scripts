@@ -124,7 +124,7 @@ def get_max_delta(point_list):
 
 def generate_line_result_data(boundary_index_list, target_list, measure_list_mm, linearity_list):
 
-    # target_x, taraget_y, measure_x, measure_y, edge_max, center_max, max_distance
+    # target_x, target_y, measure_x, measure_y, edge_max, center_max, max_distance
     result_data_list = [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] for i in range(len(target_list))]
     slash_k_b_list = line_analysis(target_list, measure_list_mm).get_target_line_formula()
     for i in range(len(linearity_list)):
@@ -184,7 +184,7 @@ def fill_line_test_result_data_sheet(filename, report_time, xlsx_data):
                 write_data_sheet.write(i, j+1, str(round(xlsx_data[-1], 3)))
                 break
             elif "Touch Point" in cell_val:
-                # target_x, taraget_y, measure_x, measure_y, edge_max, center_max, max_distance
+                # target_x, target_y, measure_x, measure_y, edge_max, center_max, max_distance
                 for m in range(len(result_data_list)):
                     write_data_sheet.write(i+2+m, j, str(m+1))
                     for n in range(len(result_data_list[m]) - 1):
